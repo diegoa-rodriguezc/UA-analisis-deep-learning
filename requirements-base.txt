@@ -1,0 +1,11 @@
+streamlit
+joblib
+pandas
+pyarrow
+folium
+streamlit-folium
+scikit-learn
+matplotlib
+opencv-python
+torch
+torchvision
