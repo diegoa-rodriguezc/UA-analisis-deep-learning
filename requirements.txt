@@ -1,0 +1,16 @@
+# Dependencias base (se instalan primero)
+streamlit
+joblib
+pandas
+pyarrow
+folium
+streamlit-folium
+scikit-learn
+matplotlib
+opencv-python-headless
+torch
+torchvision
+requests
+
+# Detectron2 se instala al final (requiere las dependencias anteriores)
+git+https://github.com/facebookresearch/detectron2.git

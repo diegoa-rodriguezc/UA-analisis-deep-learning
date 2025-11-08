@@ -6,7 +6,7 @@ folium
 streamlit-folium
 scikit-learn
 matplotlib
-opencv-python
+opencv-python-headless
 torch
 torchvision
 requests
