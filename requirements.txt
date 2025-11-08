@@ -1,4 +1,4 @@
-# Dependencias base (se instalan primero)
+# Dependencias base
 streamlit
 joblib
 pandas
@@ -8,9 +8,13 @@ streamlit-folium
 scikit-learn
 matplotlib
 opencv-python-headless
-torch
-torchvision
 requests
 
-# Detectron2 se instala al final (requiere las dependencias anteriores)
-git+https://github.com/facebookresearch/detectron2.git
+# PyTorch
+torch
+torchvision
+
+# Detectron2
+# Repositorio de wheels: https://github.com/MrMirOS/torch_packages_builder
+--extra-index-url https://miropsota.github.io/torch_packages_builder
+detectron2
