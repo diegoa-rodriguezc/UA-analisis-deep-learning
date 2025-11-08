@@ -27,6 +27,7 @@ import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 from detectron2.utils.visualizer import Visualizer, ColorMode
+import requests
 import warnings
 
 # Suprimir warnings
@@ -52,7 +53,7 @@ except ImportError as e:
 # CONFIGURACIÓN
 # ============================================================================
 
-MODEL_PATH = Path(r'models/model_final.pth')
+MODEL_PATH = Path(r'model_final.pth')
 OUTPUT_DIR = Path('outputs_streamlit')
 
 # ============================================================================
@@ -63,21 +64,17 @@ OUTPUT_DIR = Path('outputs_streamlit')
 def load_model():
     """Carga el modelo (se cachea para no recargar en cada interacción)."""
     if not MODEL_PATH.exists():
-        st.error(f"❌ Modelo no encontrado en: {MODEL_PATH}")
-        st.info("💡 Entrena el modelo primero ejecutando: `python tree_segmentation_model.py`")
-        return None
+        MODEL_URL = "https://huggingface.co/ua-darc/ua_deep_learning_model/resolve/main/model_final.pth"
+        with st.spinner("Descargando el modelo... esto puede tomar un momento."):
+            response = requests.get(MODEL_URL)
+            with open(MODEL_PATH, "wb") as f:
+                f.write(response.content)
 
     try:
         with st.spinner("Cargando modelo Detectron2..."):
             predictor = TreePanopticPredictor(model_path=MODEL_PATH)
 
-        # Mostrar información del modelo
         st.success("✓ Modelo cargado correctamente")
-        # with st.sidebar:
-        #     with st.expander("🔧 Info del Modelo", expanded=False):
-        #         st.write(f"**Ruta:** {predictor.model_info['model_path']}")
-        #         st.write(f"**Device:** {predictor.model_info['device']}")
-        #         st.write(f"**Clases:** {predictor.model_info['num_classes']}")
 
         return predictor
     except Exception as e:
@@ -97,7 +94,6 @@ def create_visualization(image, instances, metadata, file_name, coverage):
     img_original = image.copy()
 
     # Panel 1: Original
-    # (ya lo tenemos)
 
     # Panel 2: Máscaras coloreadas por instancia
     img_masks = np.zeros_like(img_original)
@@ -204,7 +200,7 @@ def process_single_image(predictor, uploaded_file):
         st.pyplot(fig)
 
         # Guardar figura
-        OUTPUT_DIR.mkdir(exist_ok=True)  # Asegurar que el directorio existe
+        OUTPUT_DIR.mkdir(exist_ok=True)  # Verificar que el directorio existe
         output_path = OUTPUT_DIR / f"result_{uploaded_file.name.replace('.tif', '.png')}"
         fig.savefig(str(output_path), dpi=150, bbox_inches='tight')
         plt.close(fig)
@@ -562,7 +558,7 @@ def main():
         predictor.predictor = predictor.predictor.__class__(predictor.cfg)
 
     # Tabs principales
-    tab1, tab2, tab3 = st.tabs(["📷 Imagen Única", "📁 Procesamiento por Lotes", "📊 Acerca del Modelo"])
+    tab1, tab2, tab3 = st.tabs(["📷 Imagen Única", "📁 Procesamiento por Lotes", "📊 Información General"])
 
     # TAB 1: Imagen única
     with tab1:
@@ -664,8 +660,16 @@ def main():
 
         st.markdown("---")
 
-        #st.subheader("📦 Información del Sistema")
-
+        st.subheader("👷Grupo de Trabajo")
+        st.markdown("""
+        | Nombre                         |
+        |--------------------------------|
+        | Adriana María Ríos             |
+        | Andrés Mauricio Martínez Celis |
+        | Diego Alberto Rodríguez Cruz   |
+        | Johana Ríos Solano             |
+        """)
+        
         # import torch
 
         # info_data = {
